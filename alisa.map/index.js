@@ -11,43 +11,52 @@ function sameObject(object1, object2) {
     let objectEnt1 = Object.entries(object1)
     let objectEnt2 = Object.entries(object2)
     if (objectEnt1.length != objectEnt2.length) return false
-    for (const [key, value_1] of objectEnt1) {
+    for (const [key, value] of objectEnt1) {
         let obj = objectEnt2.find(a => a[0] === key)
-        if (!obj || !sameValue(value_1, obj[1])) return false
+        if (!obj || !sameValue(value, obj[1])) return false
     }
     return true
 }
 
 /**
  * Checks if two entered values are the same
- * @param {*} value1 
- * @param {*} value2 
+ * @param {any} value1 
+ * @param {any} value2 
  * @returns {Boolean}
  */
 
 function sameValue(value1, value2) {
-    let pro1 = Object.prototype.toString.call(value1)
-    let pro2 = Object.prototype.toString.call(value2)
-    if (pro1 !== pro2) return false
-    switch (pro1) {
-        case "[object Null]": {
-            return true
+    try {
+        if (value1 === value2) return true;
+        let pro1 = Object.prototype.toString.call(value1)
+        let pro2 = Object.prototype.toString.call(value2)
+        if (pro1 !== pro2) return false
+        switch (pro1) {
+            case "[object Null]": {
+                return true
+            }
+            case "[object String]":
+            case "[object Number]":
+            case "[object Boolean]": {
+                return value1 === value2
+            }
+            case "[object Array]": {
+                return sameArray(value1, value2)
+            }
+            case "[object Date]": {
+                return value1.getTime() === value2.getTime()
+            }
+            case "[object Object]": {
+                return sameObject(value1, value2)
+            }
         }
-        case "[object String]":
-        case "[object Number]":
-        case "[object Boolean]": {
-            return value1 === value2
-        }
-        case "[object Array]": {
-            return sameArray(value1, value2)
-        }
-        case "[object Object]": {
-            return sameObject(value1, value2)
-        }
-        default: {
-            return value1?.name === value2?.name
-        }
-    }
+        if (value1 instanceof Set && value2 instanceof Set) return sameArray([...value1], [...value2])
+        if (value1 instanceof Map && value2 instanceof Map) return sameArray([...value1.entries()], [...value2.entries()])
+        if (value1 instanceof RegExp && value2 instanceof RegExp) return (value1.source === value2.source) && (value1.flags === value2.flags)
+        if (value1?.prototype !== undefined) return value1?.prototype === value2?.prototype
+        if (value1?.name !== undefined) return value1?.name === value2?.name
+    } catch (e) { }
+    return false
 }
 
 /**
@@ -138,7 +147,7 @@ class StrongMap extends Map {
      * StrongMap.set("test", "value")
      * 
      * // There are only 2 data in the map function. Now let's add multiple new data without touching the data inside this function.
-     * StrongMap.setMap({ this: "is", a: "example" })
+     * StrongMap.setMany({ this: "is", a: "example" })
      * 
      * // Now when we print this Map function to console, we will see "hello" "test", "this" and "a" key data.
      * 
@@ -451,6 +460,17 @@ class StrongMap extends Map {
         this.clear();
         for (const [key, value] of entries) this.set(key, value);
         return this;
+    }
+
+
+
+    /**
+     * Checks if the Map function is empty
+     * @returns {Boolean}
+     */
+
+    isEmpty() {
+        return this.size === 0
     }
 
 

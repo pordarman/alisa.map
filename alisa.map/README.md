@@ -119,6 +119,12 @@ StrongMap.get({ hello: "World!" }) // 12345
 
 
 # Updates
+## v0.0.3
+
+- Added `.isEmpty()` command
+
+- Some bugs fixed
+
 ## v0.0.2
 
 - Fixed wrong places in README.md file...
