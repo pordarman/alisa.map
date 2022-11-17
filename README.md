@@ -119,6 +119,10 @@ StrongMap.get({ hello: "World!" }) // 12345
 
 
 # Updates
+## v0.0.2
+
+- Fixed wrong places in README.md file...
+
 ## v0.0.1
 
 - Module shared publicly 🥳🥳
