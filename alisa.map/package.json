@@ -1,0 +1,29 @@
+{
+  "name": "alisa.map",
+  "version": "0.0.1",
+  "description": "More powerful and improved version of the Map function",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pordarman/alisa.map.git"
+  },
+  "exports": {
+    "require": "./index.js",
+    "node": "./index.js",
+    "default": "./index.mjs"
+  },
+  "keywords": [
+    "map",
+    "jsmap",
+    "mapjs",
+    "javascriptmap",
+    "mapjavascript",
+    "strongmap"
+  ],
+  "author": "Fearless Crazy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pordarman/alisa.map/issues"
+  },
+  "homepage": "https://github.com/pordarman/alisa.map#readme"
+}

@@ -43,12 +43,9 @@ It's very simple, first you have to open any javascript file and write the follo
 ```js
 const alisa_map = require("alisa.map")
 
-
 const StrongMap = new alisa_map()
-
-const StrongMap_1 = new alisa_map({ key: "value", anotherKey: "anotherValue" }) 
-
-const StrongMap_2 = new alisa_map([["key_1", "value_1"], ["anotherKey_1", "anotherValue_1"]])
+const StrongMap_1 = new alisa_map({ key: "value", anotherKey: "anotherValue" })
+const StrongMap_2 = new alisa_map([["key_1", "value_1"],["anotherKey_1", "anotherValue_1"]])
 ```
 Each StrongMap specifies a different Map function and the data they all hold is different. You can increase this as much as you want.
 
@@ -86,7 +83,7 @@ StrongMap.set({ hello: "World!" }, 12345)
 
 // Now when we print the StongMap function to the console, the following will appear on the screen:
 ```
-![Writing data to the Map function](https://i.hizliresim.com/qkqhu8a.png)
+![Writing data to the Map function](https://i.hizliresim.com/mnt8zwz.png)
 
 <br>
 
