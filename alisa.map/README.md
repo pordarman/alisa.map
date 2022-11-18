@@ -119,6 +119,12 @@ StrongMap.get({ hello: "World!" }) // 12345
 
 
 # Updates
+## v0.0.4
+
+- Added `.deleteFirst()` and `.deleteLast()` commands
+
+- The error of not being able to import the module has been fixed (If you see an error on the console while importing the module, ignore it)
+
 ## v0.0.3
 
 - Added `.isEmpty()` command

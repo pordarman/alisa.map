@@ -1,4 +1,4 @@
-import { version } from "./package.json"
+import pg from "./package.json" assert { type: "json" };
 
 /**
  * Checks if the elements in two entered objects are all the same
@@ -106,7 +106,7 @@ class StrongMap extends Map {
      */
 
     get version() {
-        return `v${version}`
+        return `v${pg.version}`
     }
 
 
@@ -260,6 +260,57 @@ class StrongMap extends Map {
 
 
 
+    /**
+     * Deletes the first element of the map function
+     * @param {Number} amount - Number of data to be deleted
+     * @return {Boolean}
+     */
+
+    deleteFirst(amount = 1) {
+        let size = this.size
+        if (size === 0) return false;
+        amount = Math.floor(amount)
+        if (amount === 1 || isNaN(amount)) {
+            let key = this.keys().next().value
+            return this.delete(key)
+        }
+        amount = Math.min(size, amount)
+        if (amount < 0) return this.deleteLast(-amount)
+        let keys = [...this.keys()].slice(0, amount)
+        for (const key of keys) {
+            this.delete(key)
+        }
+        return true
+    }
+
+
+
+    /**
+     * Deletes the last element of the map function
+     * @param {Number} amount - Number of data to be deleted
+     * @return {Boolean}
+     */
+
+    deleteLast(amount = 1) {
+        let size = this.size
+        if (size === 0) return false;
+        amount = Math.floor(amount)
+        if (amount === 1 || isNaN(amount)) {
+            let keys = [...this.keys()]
+            let lastKey = keys[keys.length - 1]
+            return this.delete(lastKey)
+        }
+        amount = Math.min(size, amount)
+        if (amount < 0) return this.deleteFirst(-amount)
+        let keys = [...this.keys()].slice(-amount)
+        for (const key of keys) {
+            this.delete(key)
+        }
+        return true
+    }
+
+
+
 
     /**
      * Obtains the value of the given key if it exists, otherwise sets and returns the value provided by the default value generator
@@ -325,7 +376,7 @@ class StrongMap extends Map {
     first(amount = 1) {
         amount = Math.floor(amount)
         if (amount === 1 || isNaN(amount)) return this.values().next().value;
-        if (amount < 0) return this.last(amount * -1);
+        if (amount < 0) return this.last(-amount);
         amount = Math.min(this.size, amount);
         const iter = this.values();
         return Array.from({ length: amount }, () => iter.next().value);
@@ -342,7 +393,7 @@ class StrongMap extends Map {
     firstKey(amount = 1) {
         amount = Math.floor(amount)
         if (amount === 1 || isNaN(amount)) return this.keys().next().value;
-        if (amount < 0) return this.lastKey(amount * -1);
+        if (amount < 0) return this.lastKey(-amount);
         amount = Math.min(this.size, amount);
         const iter = this.keys();
         return Array.from({ length: amount }, () => iter.next().value);
@@ -360,7 +411,7 @@ class StrongMap extends Map {
         amount = Math.floor(amount)
         const arr = [...this.values()];
         if (amount === 1 || isNaN(amount)) return arr[arr.length - 1];
-        if (amount < 0) return this.first(amount * -1);
+        if (amount < 0) return this.first(-amount);
         if (!amount) return [];
         return arr.slice(-amount);
     }
@@ -377,7 +428,7 @@ class StrongMap extends Map {
         amount = Math.floor(amount)
         const arr = [...this.keys()];
         if (amount === 1 || isNaN(amount)) return arr[arr.length - 1];
-        if (amount < 0) return this.firstKey(amount * -1);
+        if (amount < 0) return this.firstKey(-amount);
         if (!amount) return [];
         return arr.slice(-amount);
     }
@@ -850,6 +901,5 @@ class StrongMap extends Map {
     }
 
 }
-
 
 export default StrongMap;
