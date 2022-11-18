@@ -1,5 +1,3 @@
-import pg from "./package.json" assert { type: "json" };
-
 /**
  * Checks if the elements in two entered objects are all the same
  * @param {Object} object1 
@@ -106,7 +104,7 @@ class StrongMap extends Map {
      */
 
     get version() {
-        return `v${pg.version}`
+        return `v0.0.5`
     }
 
 

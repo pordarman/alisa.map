@@ -1,6 +1,6 @@
 {
   "name": "alisa.map",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "More powerful and improved version of the Map function",
   "main": "index.js",
   "repository": {

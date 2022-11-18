@@ -28,11 +28,11 @@
 
 # What is this module?
 
-- This module is more advanced version of Map function.
+- This module is more advanced version of Map function
 
-- This module provides a more stable way for you by eliminating the deficiencies and errors of the Map function.
+- This module provides a more stable way for you by eliminating the deficiencies and errors of the Map function
 
-- It has all the commands you need and there is an explanation of how each command should be used.
+- It has all the commands you need and there is an explanation of how each command should be used
 
 <br>
 
@@ -50,7 +50,7 @@ const StrongMap_1 = new alisa_map({ key: "value", anotherKey: "anotherValue" })
 
 const StrongMap_2 = new alisa_map([["key_1", "value_1"], ["anotherKey_1", "anotherValue_1"]])
 ```
-Each StrongMap specifies a different Map function and the data they all hold is different. You can increase this as much as you want.
+Each StrongMap specifies a different Map function and the data they all hold is different. You can increase this as much as you want
 
 After typing this you can access **all** commands
 
@@ -76,7 +76,7 @@ const StrongMap = new alisa_map()
 
 # Example
 
-Now let's show how to write data to the Map function and call the written data.
+Now let's show how to write data to the Map function and call the written data
 <br>
 
 ```js
@@ -96,7 +96,7 @@ Now let's try to pull the data we wrote
 StrongMap.get("hello") // "World!"
 
 StrongMap.get({ hello: "World!" }) // 12345
-// If you had tried to pull it with the normal Map function, it would most likely return undefined, but thanks to this StrongMap module, it will return whatever data you typed, no matter what you typed.
+// If you had tried to pull it with the normal Map function, it would most likely return undefined, but thanks to this StrongMap module, it will return whatever data you typed, no matter what you typed
 ```
 
 *StrongMap module always wins*
@@ -111,7 +111,7 @@ StrongMap.get({ hello: "World!" }) // 12345
 
 - The StrongMap module is being developed every day, helping you in the best way with new features and increasing performance
 
-- You don't have to wait long while downloading due to the low package size.
+- You don't have to wait long while downloading due to the low package size
 
 - Aaaannddd if you download it you will make me very happy 👉👈
 
@@ -119,6 +119,10 @@ StrongMap.get({ hello: "World!" }) // 12345
 
 
 # Updates
+## v0.0.5
+
+- The error in the console has also been fixed, now you can use the module without any problems yey
+
 ## v0.0.4
 
 - Added `.deleteFirst()` and `.deleteLast()` commands
@@ -147,7 +151,7 @@ Please do not forget to use it in the latest version for more **stable** and **p
 
 # And finally
 
-- If you want to support this module, if you request me on [github](https://github.com/pordarman), I will be happy to help you.
+- If you want to support this module, if you request me on [github](https://github.com/pordarman), I will be happy to help you
 
 - Thank you for reading this far, i love you 💗
 
