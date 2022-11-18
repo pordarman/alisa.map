@@ -39,17 +39,44 @@
 # So how to use?
 
 It's very simple, first you have to open any javascript file and write the following in it:
+
+## With node.js (require)
 <br>
+
 ```js
 const alisa_map = require("alisa.map")
 
-
+// Build without any data in it
 const StrongMap = new alisa_map()
 
+// Build with data inside (Object)
 const StrongMap_1 = new alisa_map({ key: "value", anotherKey: "anotherValue" }) 
 
+// Build with data inside (Array)
 const StrongMap_2 = new alisa_map([["key_1", "value_1"], ["anotherKey_1", "anotherValue_1"]])
+
+// Build with data inside (Map or StrongMap)
+const StrongMap_3 = new alisa_map(StrongMap_1)
 ```
+
+## Without node.js (import)
+```js
+import alisa_map from "alisa.map"
+
+// Build without any data in it
+const StrongMap = new alisa_map()
+
+// Build with data inside (Object)
+const StrongMap_1 = new alisa_map({ key: "value", anotherKey: "anotherValue" }) 
+
+// Build with data inside (Array)
+const StrongMap_2 = new alisa_map([["key_1", "value_1"], ["anotherKey_1", "anotherValue_1"]])
+
+// Build with data inside (Map or StrongMap)
+const StrongMap_3 = new alisa_map(StrongMap_1)
+```
+
+
 Each StrongMap specifies a different Map function and the data they all hold is different. You can increase this as much as you want
 
 After typing this you can access **all** commands
@@ -119,6 +146,12 @@ StrongMap.get({ hello: "World!" }) // 12345
 
 
 # Updates
+## v0.0.6
+
+- Fixed some typos
+
+- Updated README.md file
+
 ## v0.0.5
 
 - The error in the console has also been fixed, now you can use the module without any problems yey

@@ -30,9 +30,6 @@ function sameValue(value1, value2) {
         let pro2 = Object.prototype.toString.call(value2)
         if (pro1 !== pro2) return false
         switch (pro1) {
-            case "[object Null]": {
-                return true
-            }
             case "[object String]":
             case "[object Number]":
             case "[object Boolean]": {
@@ -104,7 +101,7 @@ class StrongMap extends Map {
      */
 
     get version() {
-        return `v0.0.5`
+        return `v0.0.6`
     }
 
 
@@ -212,7 +209,7 @@ class StrongMap extends Map {
     /**
      * Indicating whether an element with the specified key exists or not
      * @param {any} key - The name of the key to be checked
-     * @returns {StrongMap}
+     * @returns {Boolean}
      */
 
     has(key) {
@@ -261,7 +258,7 @@ class StrongMap extends Map {
     /**
      * Deletes the first element of the map function
      * @param {Number} amount - Number of data to be deleted
-     * @return {Boolean}
+     * @return {Boolean} Returns true if the data to be deleted exists in the Map function, false otherwise
      */
 
     deleteFirst(amount = 1) {
@@ -286,7 +283,7 @@ class StrongMap extends Map {
     /**
      * Deletes the last element of the map function
      * @param {Number} amount - Number of data to be deleted
-     * @return {Boolean}
+     * @return {Boolean} Returns true if the data to be deleted exists in the Map function, false otherwise
      */
 
     deleteLast(amount = 1) {
@@ -468,14 +465,14 @@ class StrongMap extends Map {
      */
 
     random(amount = 1) {
+        let size = this.size
+        if (size === 0) return [];
         amount = Math.floor(amount)
         const arr = [...this.values()];
         if (amount === 1 || isNaN(amount)) return arr[Math.floor(Math.random() * arr.length)];
-        if (!arr.length || !amount) return [];
-        return Array.from(
-            { length: Math.min(amount, arr.length) },
-            () => arr.splice(Math.floor(Math.random() * arr.length), 1)[0]
-        );
+        amount = Math.min(size, amount)
+        if (!amount) return [];
+        return Array.from({ length: amount }, () => arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
     }
 
 
@@ -487,14 +484,14 @@ class StrongMap extends Map {
      */
 
     randomKey(amount) {
+        let size = this.size
+        if (size === 0) return [];
         amount = Math.floor(amount)
         const arr = [...this.keys()];
         if (amount === 1 || isNaN(amount)) return arr[Math.floor(Math.random() * arr.length)];
-        if (!arr.length || !amount) return [];
-        return Array.from(
-            { length: Math.min(amount, arr.length) },
-            () => arr.splice(Math.floor(Math.random() * arr.length), 1)[0]
-        );
+        amount = Math.min(size, amount)
+        if (!amount) return [];
+        return Array.from({ length: Math.min(amount, arr.length) }, () => arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
     }
 
 
@@ -507,7 +504,9 @@ class StrongMap extends Map {
     reverse() {
         const entries = [...this.entries()].reverse();
         this.clear();
-        for (const [key, value] of entries) this.set(key, value);
+        for (const [key, value] of entries) {
+            this.set(key, value)
+        }
         return this;
     }
 
@@ -536,7 +535,7 @@ class StrongMap extends Map {
         for (const [key, value] of this) {
             if (fn(value, key, this)) return value;
         }
-        return void 0;
+        return undefined;
     }
 
 
@@ -554,7 +553,7 @@ class StrongMap extends Map {
         for (const [key, value] of this) {
             if (fn(value, key, this)) return key;
         }
-        return void 0;
+        return undefined;
     }
 
 
@@ -666,7 +665,9 @@ class StrongMap extends Map {
         if (typeof fn !== "function") throw new TypeError(`The ${fn} value is not a function. Please enter a valid function expression`);
         if (thisArg !== undefined) fn = fn.bind(thisArg);
         const map = new this.constructor[Symbol.species]();
-        for (const [key, value] of this) map.set(key, fn(value, key, this));
+        for (const [key, value] of this) {
+            map.set(key, fn(value, key, this));
+        }
         return map;
     }
 
@@ -789,7 +790,9 @@ class StrongMap extends Map {
     concat(...maps) {
         const newColl = this.clone();
         for (const map of maps) {
-            for (const [key, value] of map) newColl.set(key, value);
+            for (const [key, value] of map) {
+                newColl.set(key, value);
+            }
         }
         return newColl;
     }
