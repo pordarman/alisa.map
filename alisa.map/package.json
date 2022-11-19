@@ -1,7 +1,7 @@
 {
   "name": "alisa.map",
-  "version": "0.0.6",
-  "description": "More powerful and improved version of the Map function",
+  "version": "0.0.8",
+  "description": "StrongMap, a more powerful and improved version of the map function",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -18,7 +18,8 @@
     "mapjs",
     "javascriptmap",
     "mapjavascript",
-    "strongmap"
+    "strongmap",
+    "strong-map"
   ],
   "author": "Fearless Crazy",
   "license": "MIT",

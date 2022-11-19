@@ -39,30 +39,16 @@
 # So how to use?
 
 It's very simple, first you have to open any javascript file and write the following in it:
-
-## With node.js (require)
 <br>
 
 ```js
+// Node.js
 const alisa_map = require("alisa.map")
 
-// Build without any data in it
-const StrongMap = new alisa_map()
-
-// Build with data inside (Object)
-const StrongMap_1 = new alisa_map({ key: "value", anotherKey: "anotherValue" }) 
-
-// Build with data inside (Array)
-const StrongMap_2 = new alisa_map([["key_1", "value_1"], ["anotherKey_1", "anotherValue_1"]])
-
-// Build with data inside (Map or StrongMap)
-const StrongMap_3 = new alisa_map(StrongMap_1)
-```
-
-## Without node.js (import)
-```js
+// Without node.js
 import alisa_map from "alisa.map"
 
+
 // Build without any data in it
 const StrongMap = new alisa_map()
 
@@ -75,7 +61,6 @@ const StrongMap_2 = new alisa_map([["key_1", "value_1"], ["anotherKey_1", "anoth
 // Build with data inside (Map or StrongMap)
 const StrongMap_3 = new alisa_map(StrongMap_1)
 ```
-
 
 Each StrongMap specifies a different Map function and the data they all hold is different. You can increase this as much as you want
 
@@ -123,10 +108,56 @@ Now let's try to pull the data we wrote
 StrongMap.get("hello") // "World!"
 
 StrongMap.get({ hello: "World!" }) // 12345
-// If you had tried to pull it with the normal Map function, it would most likely return undefined, but thanks to this StrongMap module, it will return whatever data you typed, no matter what you typed
+// If you had tried to pull it with the normal Map function, it would most likely return undefined
+// But thanks to this StrongMap module, it will return whatever data you typed, no matter what you typed
 ```
 
 *StrongMap module always wins*
+
+<br>
+
+Now let's say you are pulling data from other files with the fs module. But since you are constantly using the readFile command, your code has started to slow down. <br>
+This is where **StrongMap** comes into play. If you save the file you pulled using **StrongMap** and save that file again, instead of reading that file, it will pull the cached data and thus the code you write will **speed up**.
+
+What I'm about to tell you may sound a bit confusing to you, so let me show you an example right away.
+
+```js
+// First we define our modules
+
+const alisa_map = require("alisa.map")
+const fs = require("fs") 
+// or
+import alisa_map from "alisa.map";
+import fs from "fs";
+
+const StrongMap = new alisa_map()
+
+// Then we write the commands to pull the file into a function
+function getFile(fileName) {
+
+    // If the file is in the cache, it will pull the file directly without using fs commands
+    if (StrongMap.has(fileName)) return StrongMap.get(fileName)
+
+    // If it is not in the cache, it pulls the file with the fs module and saves the data in the cache for later use
+    try {
+
+        let file = fs.readFileSync(fileName, "utf-8")
+
+        StrongMap.set(fileName, file)
+
+        return file
+
+    } catch (error) {
+      throw new TypeError(`File ${fileName} not found!`)
+    }
+
+}
+
+
+getFile("example.txt") // It pulls this file with the fs module
+
+getFile("example.txt") // But since we pulled this file earlier, it pulls it from the cache (Faster)
+```
 
 <br>
 
@@ -146,6 +177,10 @@ StrongMap.get({ hello: "World!" }) // 12345
 
 
 # Updates
+## v0.0.8
+
+- Added examples to README.md file
+
 ## v0.0.6
 
 - Fixed some typos

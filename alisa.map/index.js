@@ -101,7 +101,7 @@ class StrongMap extends Map {
      */
 
     get version() {
-        return `v0.0.6`
+        return `v0.0.8`
     }
 
 
