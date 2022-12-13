@@ -1,6 +1,6 @@
 {
   "name": "alisa.map",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "StrongMap, a more powerful and improved version of the map function",
   "main": "index.js",
   "repository": {

@@ -101,7 +101,7 @@ class StrongMap extends Map {
      */
 
     get version() {
-        return `v0.0.8`
+        return `v0.1.0`
     }
 
 
@@ -132,7 +132,7 @@ class StrongMap extends Map {
 
 
     /**
-     * It deletes all the data inside the Map function and recreates the function by writing the data you entered into the Map function.
+     * Adds all the data you entered in the Set function without deleting all the data in the Set function
      * @param {Map|StrongMap|Object|Array<Array<any,any>>} keysAndValues - Data to be written into when recreating the Map function
      * @returns {StrongMap}
      * @example
@@ -141,10 +141,10 @@ class StrongMap extends Map {
      * StrongMap.set("hello", "World!")
      * StrongMap.set("test", "value")
      * 
-     * // There are only 2 data in the map function. Now let's add multiple new data without touching the data inside this function.
+     * // There are only 2 data in the map function. Now let's add multiple new data without touching the data inside this function
      * StrongMap.setMany({ this: "is", a: "example" })
      * 
-     * // Now when we print this Map function to console, we will see "hello" "test", "this" and "a" key data.
+     * // Now when we print this Map function to console, we will see "hello" "test", "this" and "a" key data
      * 
      * console.log(StrongMap) // StrongMap(4) { 'hello' => 'World!, 'test' => 'value', 'this' => 'is', 'a' => 'example' }
      */
@@ -169,7 +169,7 @@ class StrongMap extends Map {
 
 
     /**
-     * It deletes all the data inside the Map function and recreates the function by writing the data you entered into the Map function.
+     * It deletes all the data inside the Map function and recreates the function by writing the data you entered into the Map function
      * @param {Map|StrongMap|Object|Array<Array<any,any>>} keysAndValues - Data to be written into when recreating the Map function
      * @returns {StrongMap}
      * @example
@@ -214,7 +214,7 @@ class StrongMap extends Map {
 
     has(key) {
         if (super.has(key)) return true;
-        return [...this.entries()].some(([key_1]) => sameValue(key_1, key))
+        return [...this.keys()].some(key_1 => sameValue(key_1, key))
     }
 
 
@@ -491,7 +491,7 @@ class StrongMap extends Map {
         if (amount === 1 || isNaN(amount)) return arr[Math.floor(Math.random() * arr.length)];
         amount = Math.min(size, amount)
         if (!amount) return [];
-        return Array.from({ length: Math.min(amount, arr.length) }, () => arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
+        return Array.from({ length:amount }, () => arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
     }
 
 
