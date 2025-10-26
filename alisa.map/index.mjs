@@ -1,8 +1,9 @@
+// @ts-check
 /**
  * Checks if the elements in two entered objects are all the same
  * @param {Object} object1 
  * @param {Object} object2 
- * @returns {Boolean}
+ * @returns {Boolean} - Returns true if the objects are the same, otherwise it returns false
  */
 
 function sameObject(object1, object2) {
@@ -24,40 +25,36 @@ function sameObject(object1, object2) {
  */
 
 function sameValue(value1, value2) {
-    try {
-        if (value1 === value2) return true;
-        let pro1 = Object.prototype.toString.call(value1)
-        let pro2 = Object.prototype.toString.call(value2)
-        if (pro1 !== pro2) return false
-        switch (pro1) {
-            case "[object String]":
-            case "[object Number]":
-            case "[object Boolean]": {
-                return value1 === value2
-            }
-            case "[object Array]": {
-                return sameArray(value1, value2)
-            }
-            case "[object Date]": {
-                return value1.getTime() === value2.getTime()
-            }
-            case "[object Object]": {
-                return sameObject(value1, value2)
-            }
+    if (value1 === value2) return true;
+    let pro1 = Object.prototype.toString.call(value1);
+    let pro2 = Object.prototype.toString.call(value2);
+    if (pro1 !== pro2) return false;
+    switch (pro1) {
+        case "[object String]":
+        case "[object Number]":
+        case "[object Boolean]": {
+            return value1 === value2;
         }
-        if (value1 instanceof Set && value2 instanceof Set) return sameArray([...value1], [...value2])
-        if (value1 instanceof Map && value2 instanceof Map) return sameArray([...value1.entries()], [...value2.entries()])
-        if (value1 instanceof RegExp && value2 instanceof RegExp) return (value1.source === value2.source) && (value1.flags === value2.flags)
-        if (value1?.prototype !== undefined) return value1?.prototype === value2?.prototype
-        if (value1?.name !== undefined) return value1?.name === value2?.name
-    } catch (e) { }
-    return false
+        case "[object Array]": {
+            return sameArray(value1, value2);
+        }
+        case "[object Date]": {
+            return value1.getTime() === value2.getTime();
+        }
+        case "[object Object]": {
+            return sameObject(value1, value2);
+        }
+    }
+    if (value1 instanceof Set && value2 instanceof Set) return sameArray([...value1], [...value2]);
+    if (value1 instanceof Map && value2 instanceof Map) return sameArray([...value1.entries()], [...value2.entries()]);
+    if (value1 instanceof RegExp && value2 instanceof RegExp) return (value1.source === value2.source) && (value1.flags === value2.flags);
+    return false;
 }
 
 /**
  * Checks if the elements in the two entered arrays are all the same
- * @param {Array} array1 
- * @param {Array} array2 
+ * @param {Array<any>} array1 
+ * @param {Array<any>} array2 
  * @returns {Boolean}
  */
 
@@ -65,19 +62,28 @@ function sameArray(array1, array2) {
     let length = array1.length;
     if (length != array2.length) return false
     for (let index = 0; index < length; ++index) {
-      if (!sameValue(array1[index], array2[index])) return false;
+        if (!sameValue(array1[index], array2[index])) return false;
     }
     return true;
-  }
+}
 
 class StrongMap extends Map {
 
     /**
      * You set whether to create the Map function with any value while it is being created
-     * @param {StrongMap|Map|Array|Object} props 
+     * @param {StrongMap|Map<any, any>|Array<any>|Object|undefined|null} props 
      */
     constructor(props) {
-        super(props)
+
+        // Accept Map/StrongMap, an array of [key, value] pairs, or a plain object.
+        // Convert plain objects to an entries array so the Map constructor receives a valid iterable/array.
+        if (props instanceof Map || props instanceof StrongMap || Array.isArray(props)) {
+            super(props);
+        } else if (props && Object.prototype.toString.call(props) === "[object Object]") {
+            super(Object.entries(props));
+        } else {
+            super();
+        }
     }
 
 
@@ -85,7 +91,7 @@ class StrongMap extends Map {
      * Default sort function to use when sorting objects in an array
      * @param {any} firstValue - First object to sort
      * @param {any} secondValue - Second object to sort
-     * @returns {Boolean}
+     * @returns {Number}
      */
     static defaultSort(firstValue, secondValue) {
         return Number(firstValue > secondValue) || Number(firstValue === secondValue) - 1;
@@ -119,20 +125,20 @@ class StrongMap extends Map {
      * Adds a new element with a specified key and value to the Map. If an element with the same key already exists, the element will be updated
      * @param {any} key - The name of the key to be registered
      * @param {any} value - Value corresponding to the key
-     * @returns {StrongMap}
+     * @returns {this}
      */
 
     set(key, value) {
-        super.set(key, value)
-        return this
+        super.set(key, value);
+        return this;
     }
 
 
 
     /**
      * Adds all the data you entered in the Set function without deleting all the data in the Set function
-     * @param {Map|StrongMap|Object|Array<Array<any,any>>} keysAndValues - Data to be written into when recreating the Map function
-     * @returns {StrongMap}
+     * @param {Map<any, any>|StrongMap|Object<String, any>|Array<Array<[any, any]>>} keysAndValues - Data to be written into when recreating the Map function
+     * @returns {this}
      * @example
      * 
      * // Let's write some data first
@@ -168,8 +174,8 @@ class StrongMap extends Map {
 
     /**
      * It deletes all the data inside the Map function and recreates the function by writing the data you entered into the Map function
-     * @param {Map|StrongMap|Object|Array<Array<any,any>>} keysAndValues - Data to be written into when recreating the Map function
-     * @returns {StrongMap}
+     * @param {Map<any, any>|StrongMap|Object<String, any>|Array<Array<[any, any]>>} keysAndValues - Data to be written into when recreating the Map function
+     * @returns {this}
      * @example
      * 
      * // Let's write some data first
@@ -212,7 +218,7 @@ class StrongMap extends Map {
 
     has(key) {
         if (super.has(key)) return true;
-        return [...this.entries()].some(([key_1]) => sameValue(key_1, key))
+        return [...this.keys()].some(key_1 => sameValue(key_1, key))
     }
 
 
@@ -220,7 +226,7 @@ class StrongMap extends Map {
     /**
      * Returns a specified element from the Map object. If the value that is associated to the provided key is an object, then you will get a reference to that object and any change made to that object will effectively modify it inside the Map
      * @param {any} key - The name of the key to revert
-     * @returns {StrongMap}
+     * @returns {this}
      */
 
     get(key) {
@@ -308,7 +314,7 @@ class StrongMap extends Map {
     /**
      * Obtains the value of the given key if it exists, otherwise sets and returns the value provided by the default value generator
      * @param {any} key - The key to get if it exists, or set otherwise
-     * @param {(key: any, this: StrongMap) => any} defaultValueGenerator - A function that generates the default value
+     * @param {(this: StrongMap, key: any) => any} defaultValueGenerator - A function that generates the default value
      * @returns {any}
      * @example
      * 
@@ -321,7 +327,6 @@ class StrongMap extends Map {
      * // If there is no data you want to call, using the function you entered as the second parameter, it returns the data it created after creating a new data for that key data
      * StrongMap.ensure("test1", () => new Date().getFullYear() + 1) // 2023
      * 
-     * 
      * // And now the following data is written in the Map function:
      * // StrongMap(2) { 'test' => 'value', 'test1' => 2023 }
      */
@@ -329,7 +334,7 @@ class StrongMap extends Map {
     ensure(key, defaultValueGenerator) {
         if (this.has(key)) return this.get(key);
         if (typeof defaultValueGenerator !== "function") throw new TypeError(`The ${defaultValueGenerator} value is not a function. Please enter a valid function expression`);
-        const defaultValue = defaultValueGenerator(key, this);
+        const defaultValue = defaultValueGenerator.call(this, key);
         this.set(key, defaultValue);
         return defaultValue;
     }
@@ -489,14 +494,14 @@ class StrongMap extends Map {
         if (amount === 1 || isNaN(amount)) return arr[Math.floor(Math.random() * arr.length)];
         amount = Math.min(size, amount)
         if (!amount) return [];
-        return Array.from({ length: Math.min(amount, arr.length) }, () => arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
+        return Array.from({ length: amount }, () => arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
     }
 
 
 
     /**
      * Reverses the data inside the map function. Identical in behavior to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse Array.reverse()}
-     * @returns {StrongMap}
+     * @returns {this}
      */
 
     reverse() {
@@ -522,7 +527,7 @@ class StrongMap extends Map {
 
     /**
      * Searches for the value of a single item where the given function returns a truthy value. Identical in behavior to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find Array.find()}
-     * @param {( value: any, key: any, this: StrongMap ) => Boolean} fn - The function to test with (should return boolean)
+     * @param {( this: StrongMap, value: any, key: any ) => Boolean} fn - The function to test with (should return boolean)
      * @param {any} thisArg - Value to use as `this` when executing function
      * @returns {any}
      */
@@ -531,7 +536,7 @@ class StrongMap extends Map {
         if (typeof fn !== "function") throw new TypeError(`The ${fn} value is not a function. Please enter a valid function expression`);
         if (thisArg !== undefined) fn = fn.bind(thisArg);
         for (const [key, value] of this) {
-            if (fn(value, key, this)) return value;
+            if (fn.call(this, value, key)) return value;
         }
         return undefined;
     }
@@ -540,7 +545,7 @@ class StrongMap extends Map {
 
     /**
      * Searches for the value of a single item where the given function returns a truthy value. Identical in behavior to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find Array.find()}
-     * @param {( value: any, key: any, this: StrongMap ) => Boolean} fn - The function to test with (should return boolean)
+     * @param {( this: StrongMap, value: any, key: any ) => Boolean} fn - The function to test with (should return boolean)
      * @param {any} thisArg - Value to use as `this` when executing function
      * @returns {any}
      */
@@ -549,7 +554,7 @@ class StrongMap extends Map {
         if (typeof fn !== "function") throw new TypeError(`The ${fn} value is not a function. Please enter a valid function expression`);
         if (thisArg !== undefined) fn = fn.bind(thisArg);
         for (const [key, value] of this) {
-            if (fn(value, key, this)) return key;
+            if (fn.call(this, value, key)) return key;
         }
         return undefined;
     }
@@ -558,7 +563,7 @@ class StrongMap extends Map {
 
     /**
      * Removes items that satisfy the provided filter function
-     * @param {( value: any, key: any, this: StrongMap ) => Boolean} fn - Function used to test (should return a boolean)
+     * @param {( this: StrongMap, value: any, key: any ) => Boolean} fn - Function used to test (should return a boolean)
      * @param {any} thisArg - Value to use as `this` when executing function 
      * @returns {Number} The number of removed entries
      */
@@ -568,7 +573,7 @@ class StrongMap extends Map {
         if (thisArg !== undefined) fn = fn.bind(thisArg);
         const previousSize = this.size;
         for (const [key, value] of this) {
-            if (fn(value, key, this)) this.delete(key);
+            if (fn.call(this, value, key)) this.delete(key);
         }
         return previousSize - this.size;
     }
@@ -577,7 +582,7 @@ class StrongMap extends Map {
 
     /**
      * Searches for the value of multiple elements for which the given function returns a true value and returns them in the Map function, not an array. Identical in behavior to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter Array.filter()}
-     * @param {( value: any, key: any, this: StrongMap ) => Boolean} fn - The function to test with (should return boolean)
+     * @param {( this: StrongMap, value: any, key: any ) => Boolean} fn - The function to test with (should return boolean)
      * @param {any} thisArg - Value to use as `this` when executing function
      * @returns {StrongMap}
      */
@@ -585,9 +590,9 @@ class StrongMap extends Map {
     filter(fn, thisArg) {
         if (typeof fn !== "function") throw new TypeError(`The ${fn} value is not a function. Please enter a valid function expression`);
         if (thisArg !== undefined) fn = fn.bind(thisArg);
-        const results = new this.constructor[Symbol.species]();
+        const results = new StrongMap(null);
         for (const [key, value] of this) {
-            if (fn(value, key, this)) results.set(key, value);
+            if (fn.call(this, value, key)) results.set(key, value);
         }
         return results;
     }
@@ -595,20 +600,20 @@ class StrongMap extends Map {
 
     /**
      * Partitions the StrongMap into two maps where the first StrongMap contains the items that passed and the second contains the items that failed
-     * @param {( value: any, key: any, this: StrongMap ) => Boolean} fn - Function used to test (should return a boolean)
+     * @param {( this: StrongMap, value: any, key: any ) => Boolean} fn - Function used to test (should return a boolean)
      * @param {any} thisArg - Value to use as `this` when executing function
-     * @returns {Array<StrongMap,StrongMap>}
+     * @returns {Array<StrongMap>}
      */
 
     partition(fn, thisArg) {
         if (typeof fn !== "function") throw new TypeError(`The ${fn} value is not a function. Please enter a valid function expression`);
         if (thisArg !== undefined) fn = fn.bind(thisArg);
         const results = [
-            new this.constructor[Symbol.species](),
-            new this.constructor[Symbol.species]()
+            new StrongMap(null),
+            new StrongMap(null)
         ];
         for (const [key, value] of this) {
-            if (fn(value, key, this)) {
+            if (fn.call(this, value, key)) {
                 results[0].set(key, value);
             } else {
                 results[1].set(key, value);
@@ -621,21 +626,21 @@ class StrongMap extends Map {
 
     /**
      * Maps each item into a StrongMap, then joins the results into a single StrongMap. Identical in behavior to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap Array.flatMap()}
-     * @param {( value: any, key: any, this: StrongMap ) => any} fn - Function that produces a new StrongMap
+     * @param {( this: StrongMap, value: any, key: any ) => any} fn - Function that produces a new StrongMap
      * @param {any} thisArg - Value to use as `this` when executing function
      * @returns {StrongMap}
      */
 
     flatMap(fn, thisArg) {
         const maps = this.map(fn, thisArg);
-        return new this.constructor[Symbol.species]().concat(...maps);
+        return new StrongMap(null).concat(...maps);
     }
 
 
 
     /**
      * Maps each item to another value into an array. Identical in behavior to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map Array.map()}
-     * @param {( value: any, key: any, this: StrongMap ) => any} fn - Function that produces an element of the new array, taking three arguments
+     * @param {( this: StrongMap, value: any, key: any ) => any} fn - Function that produces an element of the new array, taking three arguments
      * @param {any} thisArg - Value to use as `this` when executing function 
      * @returns {Array<any>}
      */
@@ -645,8 +650,8 @@ class StrongMap extends Map {
         if (thisArg !== undefined) fn = fn.bind(thisArg);
         const iter = this.entries();
         return Array.from({ length: this.size }, () => {
-            const [key, value] = iter.next().value;
-            return fn(value, key, this);
+            const [key, value] = iter.next().value || [];
+            return fn.call(this, value, key);
         });
     }
 
@@ -654,7 +659,7 @@ class StrongMap extends Map {
 
     /**
      * Maps each item to another value into a StrongMap. Identical in behavior to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map Array.map()}
-     * @param {( value: any, key: any, this: StrongMap ) => any} fn - Function that produces an element of the new array, taking three arguments
+     * @param {( this: StrongMap, value: any, key: any ) => any} fn - Function that produces an element of the new array, taking three arguments
      * @param {any} thisArg - Value to use as `this` when executing function 
      * @returns {StrongMap}
      */
@@ -662,9 +667,9 @@ class StrongMap extends Map {
     mapValues(fn, thisArg) {
         if (typeof fn !== "function") throw new TypeError(`The ${fn} value is not a function. Please enter a valid function expression`);
         if (thisArg !== undefined) fn = fn.bind(thisArg);
-        const map = new this.constructor[Symbol.species]();
+        const map = new StrongMap(null);
         for (const [key, value] of this) {
-            map.set(key, fn(value, key, this));
+            map.set(key, fn.call(this, value, key));
         }
         return map;
     }
@@ -673,7 +678,7 @@ class StrongMap extends Map {
 
     /**
      * Checks if there exists an item that passes a test. Identical in behavior to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some Array.some()}
-     * @param {( value: any, key: any, this: StrongMap ) => Boolean} fn - Function used to test (should return a boolean)
+     * @param {( this: StrongMap, value: any, key: any ) => Boolean} fn - Function used to test (should return a boolean)
      * @param {any} thisArg - Value to use as `this` when executing function
      * @returns {Boolean}
      */
@@ -682,7 +687,7 @@ class StrongMap extends Map {
         if (typeof fn !== "function") throw new TypeError(`The ${fn} value is not a function. Please enter a valid function expression`);
         if (thisArg !== undefined) fn = fn.bind(thisArg);
         for (const [key, value] of this) {
-            if (fn(value, key, this)) return true;
+            if (fn.call(this, value, key)) return true;
         }
         return false;
     }
@@ -691,7 +696,7 @@ class StrongMap extends Map {
 
     /**
      * Checks if all items passes a test. Identical in behavior to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every Array.every()}
-     * @param {( value: any, key: any, this: StrongMap ) => Boolean} fn - Function used to test (should return a boolean)
+     * @param {( this: StrongMap, value: any, key: any ) => Boolean} fn - Function used to test (should return a boolean)
      * @param {any} thisArg - Value to use as `this` when executing function
      * @returns {Boolean}
      */
@@ -700,7 +705,7 @@ class StrongMap extends Map {
         if (typeof fn !== "function") throw new TypeError(`The ${fn} value is not a function. Please enter a valid function expression`);
         if (thisArg !== undefined) fn = fn.bind(thisArg);
         for (const [key, value] of this) {
-            if (!fn(value, key, this)) return false;
+            if (!fn.call(this, value, key)) return false;
         }
         return true;
     }
@@ -709,7 +714,7 @@ class StrongMap extends Map {
 
     /**
      * Applies a function to produce a single value. Identical in behavior to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce Array.reduce()}
-     * @param {( value: any, key: any, this: StrongMap ) => any} fn - Function used to reduce, taking four arguments; `accumulator`, `currentValue`, `currentKey`, and `StrongMap`
+     * @param {( this: StrongMap, accumulator: any, value: any, key: any ) => any} fn - Function used to reduce, taking four arguments; `accumulator`, `currentValue`, `currentKey`, and `StrongMap`
      * @param {any} initialValue - Starting value for the accumulator
      * @returns {any}
      */
@@ -719,7 +724,7 @@ class StrongMap extends Map {
         let accumulator;
         if (initialValue !== undefined) {
             accumulator = initialValue;
-            for (const [key, value] of this) accumulator = fn(accumulator, value, key, this);
+            for (const [key, value] of this) accumulator = fn.call(this, accumulator, value, key);
             return accumulator;
         }
         let first = true;
@@ -729,7 +734,7 @@ class StrongMap extends Map {
                 first = false;
                 continue;
             }
-            accumulator = fn(accumulator, value, key, this);
+            accumulator = fn.call(this, accumulator, value, key);
         }
         if (first) throw new TypeError("Reduce of empty map with no initial value");
         return accumulator;
@@ -739,9 +744,9 @@ class StrongMap extends Map {
 
     /**
      * Identical to {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach Map.forEach()} but returns the StrongMap instead of undefined
-     * @param {( value: any, key: any, this: StrongMap ) => any} fn - Function to execute for each element
+     * @param {( this: StrongMap, value: any, key: any ) => any} fn - Function to execute for each element
      * @param {any} thisArg - Value to use as `this` when executing function
-     * @returns {StrongMap}
+     * @returns {this}
      */
 
     each(fn, thisArg) {
@@ -754,15 +759,15 @@ class StrongMap extends Map {
 
     /**
      * Runs a function on the StrongMap and returns the StrongMap
-     * @param {( value: any, key: any, this: StrongMap ) => any} fn 
+     * @param {( this: StrongMap ) => any} fn 
      * @param {any} thisArg 
-     * @returns {StrongMap}
+     * @returns {this}
      */
 
     tap(fn, thisArg) {
         if (typeof fn !== "function") throw new TypeError(`The ${fn} value is not a function. Please enter a valid function expression`);
         if (thisArg !== undefined) fn = fn.bind(thisArg);
-        fn(this);
+        fn.call(this);
         return this;
     }
 
@@ -774,14 +779,14 @@ class StrongMap extends Map {
      */
 
     clone() {
-        return new this.constructor[Symbol.species](this);
+        return new StrongMap(this);
     }
 
 
 
     /**
      * Combines this StrongMap with others into a new StrongMap. None of the source maps are modified
-     * @param  {...(StrongMap|Map)} maps - Maps to merge
+     * @param  {...(StrongMap|Map<any, any>)} maps - Maps to merge
      * @returns {StrongMap}
      */
 
@@ -798,7 +803,7 @@ class StrongMap extends Map {
 
     /**
      * Checks if this StrongMap shares identical items with another
-     * @param {StrongMap|Map} map 
+     * @param {StrongMap|Map<any, any>} map 
      * @returns {Boolean}
      */
 
@@ -816,8 +821,8 @@ class StrongMap extends Map {
 
     /**
      * The sort method sorts the items of a StrongMap in place and returns it
-     * @param {( value_1: any, value_2, key_1: any, key_2: any ) => Boolean} compareFunction - Specifies a function that defines the sort order. If omitted, the StrongMap is sorted according to each character's Unicode code point value, according to the string conversion of each element
-     * @returns {StrongMap}
+     * @param {( value_1: any, value_2: any, key_1: any, key_2: any ) => number} compareFunction - Specifies a function that defines the sort order. If omitted, the StrongMap is sorted according to each character's Unicode code point value, according to the string conversion of each element
+     * @returns {this}
      */
 
     sort(compareFunction = StrongMap.defaultSort) {
@@ -834,12 +839,12 @@ class StrongMap extends Map {
 
     /**
      * The intersect method returns a new structure containing items where the keys and values are present in both original structures
-     * @param {StrongMap|Map} other - The other StrongMap to filter against
+     * @param {StrongMap|Map<any, any>} other - The other StrongMap to filter against
      * @returns {StrongMap}
      */
 
     intersect(other) {
-        const map = new this.constructor[Symbol.species]();
+        const map = new StrongMap(null);
         for (const [key, value] of other) {
             if (this.has(key) && sameValue(value, this.get(key))) map.set(key, value);
         }
@@ -850,12 +855,12 @@ class StrongMap extends Map {
 
     /**
      * The difference method returns a new structure containing items where the key is present in one of the original structures but not the other
-     * @param {StrongMap|Map} other - The other StrongMap to filter against
+     * @param {StrongMap|Map<any, any>} other - The other StrongMap to filter against
      * @returns 
      */
 
     difference(other) {
-        const map = new this.constructor[Symbol.species]();
+        const map = new StrongMap(null);
         for (const [key, value] of other) {
             if (!this.has(key)) map.set(key, value);
         }
@@ -869,19 +874,19 @@ class StrongMap extends Map {
 
     /**
      * The sorted method sorts the elements of a StrongMap and returns it. This does not change the main object
-     * @param {( value_1: any, value_2, key_1: any, key_2: any ) => Boolean} compareFunction - Specifies a function that defines the sort order. If omitted, the StrongMap is sorted according to each character's Unicode code point value, according to the string conversion of each element
+     * @param {( value_1: any, value_2: any, key_1: any, key_2: any ) => number} compareFunction - Specifies a function that defines the sort order. If omitted, the StrongMap is sorted according to each character's Unicode code point value, according to the string conversion of each element
      * @returns {StrongMap}
      */
 
     sorted(compareFunction = StrongMap.defaultSort) {
-        return new this.constructor[Symbol.species](this).sort((av, bv, ak, bk) => compareFunction(av, bv, ak, bk));
+        return new StrongMap(this).sort((av, bv, ak, bk) => compareFunction(av, bv, ak, bk));
     }
 
 
 
     /**
      * Map function returns Array object as
-     * @returns {Array<Array<any,any>>}
+     * @returns {Array<Array<[any,any]>>}
      */
 
     toArray() {
